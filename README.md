@@ -1,6 +1,9 @@
 # CIS 566 Noisy Terrain Project
 Evelyn Bailey
-https://evelyn.pb.studio
+
+Project: https://eviebail.github.io/hw01-noisy-terrain/
+
+Website: https://evelyn.pb.studio
 
 The Landscapes
 
