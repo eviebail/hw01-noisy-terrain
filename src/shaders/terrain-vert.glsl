@@ -81,7 +81,6 @@ float interpNoise2D(float x, float y) {
   return mix(i1, i2, fractY);
 }
 
-//mountain fbm
 float fbm(float x, float y) {
   float roughness = 1.f;
   float total = 0.f;
@@ -98,43 +97,19 @@ float fbm(float x, float y) {
   return total;
 }
 
-float perlin(float x, float y) { 
-  //get the points at each corner
-  vec2 q1 = vec2(floor(x), floor(y) + 1.f);
-  vec2 q2 = vec2(floor(x), floor(y));
-  vec2 q3 = vec2(floor(x) + 1.f, floor(y) + 1.f);
-  vec2 q4 = vec2(floor(x) + 1.f, floor(y) + 1.f);
-
-  //get random direction to get the gradient
-
-  //int randnumber = rand();// % (1 + 1 - 1) - 1;
-  //vec2 g1 = normalize(vec2(q1.x + randnumber, q1.y + randnumber) - q1);
-  //vec2 g1 = normalize(vec2(q2.x + randnumber, q2.y + randnumber) - q2);
-  //vec2 g1 = normalize(vec2(q3.x + randnumber, q3.y + randnumber) - q3);
-  //vec2 g1 = normalize(vec2(q4.x + randnumber, q4.y + randnumber) - q4);
-
-  //get the difference vectors to point
-  //vec2 d1 = q1 - vec2(x,y);
-  //vec2 d2 = q2 - vec2(x,y);
-  //vec2 d3 = q3 - vec2(x,y);
-  //vec2 d4 = q4 - vec2(x,y);
-
-  //dot with the gradients!!
-  //float perlin_noise = dot(d1, q1)
-
-  return 1.f;
-}
-
+//Worley Implementation from Book of Shaders: https://thebookofshaders.com/12/
 float worley (float c_size, float multiplier) {
   float cell_size = c_size;
   vec2 cell = (vs_Pos.xz + u_PlanePos.xy) / cell_size;
   float noise = 0.f;
   
+  //get the cell pixel position is in
   vec2 fract_pos = fract(cell);
   vec2 int_pos = floor(cell);
 
   float m_dist = 1.f;
 
+  //compare pos to the randpoints in the neighboring cells and save the smallest dist
   for (int y= -1; y <= 1; y++) {
     for (int x= -1; x <= 1; x++) {
       // Neighbor place in the grid
@@ -144,6 +119,7 @@ float worley (float c_size, float multiplier) {
       vec2 diff = neighbor + randpt - fract_pos;
       float dist = length(diff);
       float rough = 1.0;
+      
       // Keep the closer distance
       if (dist < m_dist) {
         m_dist = dist;
@@ -191,17 +167,15 @@ void main()
   } else if (type == 2.f) {
     float n = smoothstep(0.0,0.7,pow(worley(50.f,8.f),3.f)) + sqrt(2.f*worley_fbm_noise);
     fs_Sine = n;
-    noise = sin(4.f*y_noise)/y_noise; //pow(worley_fbm_noise,3.f);
+    noise = sin(4.f*y_noise)/y_noise;
     modelposition = vec4(vs_Pos.x, vs_Pos.y + n, vs_Pos.z, 1.0);
   } else if (type == 3.f) {
     float fbm_noise = fbm((vs_Pos.x + u_PlanePos.x) / 8.f, (vs_Pos.z + u_PlanePos.y) / 8.f);
     float n = pow(step_map(y_noise),2.f);
     noise = fbm((vs_Pos.x + u_PlanePos.x) / 10.f, (vs_Pos.z + u_PlanePos.y) / 10.f);
     fs_Sine = n;
-    //noise = 0.f;//5.f*worley(1.f,8.f);
     modelposition = vec4(vs_Pos.x, vs_Pos.y + n, vs_Pos.z, 1.0);
   } else if (type == 4.f) {
-    //fbm of fbm?
     float fbm_noise = fbm((vs_Pos.x + u_PlanePos.x) / 24.f, (vs_Pos.z + u_PlanePos.y) / 24.f);
     float n = fbm((vs_Pos.x + u_PlanePos.x + fbm_noise) / 8.f, (vs_Pos.z + u_PlanePos.y + fbm_noise) / 8.f);
     n = pow(n, 15.f) + smoothstep(0.0,1.0,worley(100.f,8.f));
