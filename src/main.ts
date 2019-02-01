@@ -12,7 +12,9 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
   tesselations: 5,
+  Day_or_Night: 0,
   'Load Scene': loadScene, // A function pointer, essentially
+  scale: 1
 };
 
 let square: Square;
@@ -82,6 +84,8 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
+  gui.add(controls, 'Day_or_Night', 0, 1).step(1);
+  gui.add(controls, 'scale', 0, 8).step(1);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -134,6 +138,7 @@ function main() {
 
   // This function will be called every frame
   function tick() {
+    lambert.setSize(controls.scale);
     camera.update();
     stats.begin();
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
@@ -141,10 +146,10 @@ function main() {
     processKeyPresses();
     renderer.render(camera, lambert, [
       plane,
-    ]);
+    ], controls.Day_or_Night);
     renderer.render(camera, flat, [
       square,
-    ]);
+    ], controls.Day_or_Night);
     stats.end();
 
     // Tell the browser to call `tick` again whenever it renders a new frame
