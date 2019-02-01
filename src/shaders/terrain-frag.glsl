@@ -31,8 +31,7 @@ void main()
             out_Col = vec4(mix(vec3(244.0 / 255.0, 66.0 / 255.0, 146.0 / 255.0) * 0.5 * (fs_Sine*0.15) + 0.1, fog_color, t), 1.0);
     } else if (type == 2.f) {
         out_Col = vec4(mix(vec3(235.0/255.0, 192.0/255.0, 114.0/255.0) * 0.5 * (fs_Sine*0.15) + 0.1, fog_color, t), 1.0);
-        }
-        else if (type == 3.f) {
+    } else if (type == 3.f) {
         if (fs_Sine == 1.f) {
             out_Col = vec4(mix(vec3(11.0/255.0, 140.0/255.0, 24.0/255.0), fog_color, t), 1.0);
         } else if (fs_Sine > 0.6) {
@@ -43,10 +42,9 @@ void main()
         } else {
             vec3 sand = vec3(193.0/255.0, 175.0/255.0, 94.0/255.0);
             vec3 water = vec3(16.0 / 255.0, 61.0 / 255.0, 186.0 / 255.0);
-            vec3 in_between = mix(water, sand, (fs_Sine - 0.4) / 0.6);// + vec3(noise);
+            vec3 in_between = mix(water, sand, (fs_Sine - 0.4) / 0.6);
             out_Col = vec4(mix(in_between, fog_color, t), 1.0);
         }
-        
     } else if (type == 4.f) {
         if (fs_Sine <= 0.3) {
             out_Col = vec4(mix(vec3(0.9,0.9,0.9) * fs_Sine + 0.5, fog_color, t), 1.0);
@@ -59,17 +57,11 @@ void main()
         } else if (fs_Sine < 0.9999) {
             vec3 bark = vec3(0.2,0.2,0.2);
             out_Col = vec4(mix(bark, fog_color, t), 1.0);
-        }
-        else {
+        } else {
             vec3 bark = vec3(64.0 / 255.0, 40.0 / 255.0, 10.0 / 255.0);
             out_Col = vec4(mix(vec3(0.5 * (fs_Sine*0.1) + 0.05), fog_color, t), 1.0);
         }
-    }
-    else {
+    } else {
         out_Col = vec4(mix(vec3(0.5 * (fs_Sine*0.15) + 0.1), fog_color, t), 1.0);
     }
-    
-
-    //original fog color vec3(164.0 / 255.0, 233.0 / 255.0, 1.0), t), 1.0)
-    
 }
